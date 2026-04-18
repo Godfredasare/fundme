@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from bson import ObjectId
 from ..db import users_col
 from ..models.user import create_user_doc
 from ..utils.auth_helpers import hash_password, check_password, serialize_doc
@@ -79,7 +80,6 @@ def login():
 @jwt_required()
 def get_me():
     user_id = get_jwt_identity()
-    from bson import ObjectId
     user = users_col.find_one({"_id": ObjectId(user_id)})
 
     if not user:
@@ -95,7 +95,6 @@ def get_me():
 def change_password():
     user_id = get_jwt_identity()
     data = request.get_json()
-    from bson import ObjectId
 
     old_password = data.get("old_password", "")
     new_password = data.get("new_password", "")
